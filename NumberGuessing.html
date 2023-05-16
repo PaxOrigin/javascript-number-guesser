@@ -13,102 +13,96 @@
         <header>Number guessing game</header>
         <p>We have selected a random number between 1 and 100, you have 10 guesses available, good luck.</p>
         <label>Enter a guess: </label>
-        <input id="inputField" type="number" min=1 max=100 maxlength="3">
-        <button title="Submit Guess" id="button">Submit Guess</button>
+        <input id="input-field" type="number" min=1 max=100 maxlength="3">
+        <button title="Submit Guess" id="submit-button">Submit Guess</button>
 
     </div>
 
     <div>
-        <output id="outputField">Numbers guessed: </output>
+        <output id="output-field">Numbers guessed: </output>
     </div>
 
     <div>
-        <output id="outputFieldCounter"></output>
+        <output id="output-field-counter"></output>
     </div>
 
     <div>
-        <output id="resultField"></output>
+        <output id="result-field"></output>
+    </div>
+    <div id="btn-container">
+
     </div>
 
 
     <script>
         let clickCount = 0;
         let randomNumber = Math.floor(Math.random() * 100);
+        const submitButton = document.querySelector("#submit-button");
+        const outputField = document.querySelector("#output-field");
+        const inputField = document.querySelector("#input-field");
+        const outputFieldCounter = document.querySelector("#output-field-counter");
+        const resultOutput = document.querySelector("#result-field");
+        const btnContainer = document.querySelector("#btn-container");
 
-
-        let reset = () => {
-
-
-            let outputField = document.querySelector("#outputField");
-            let inputField = document.querySelector("#inputField");
-            let outputFieldCounter = document.querySelector("#outputFieldCounter");
-            let resultOutput = document.querySelector("#resultField");
-
-
-            outputField.value = "Numbers guessed: ";
-            inputField.value = "";
-            clickCount = 0;
+        const drawNewNumber = () => {
             randomNumber = Math.floor(Math.random() * 100);
-            outputFieldCounter.value = "";
-            resultOutput.value = "";
-
-
+            console.log(`->${randomNumber}<-`);
         }
 
-        let checkGuess = () => {
+        const reset = () => {
+            clickCount = 0;
+            outputField.value = "Numbers guessed: ";
+            inputField.value = "";
+            resultOutput.value = "";
+            outputFieldCounter.value = "";
+            submitButton.disabled = false;
+            btnContainer.replaceChildren();
+            drawNewNumber();
+        }
 
-            let outputField = document.querySelector("#outputField");
-            let inputField = document.querySelector("#inputField");
-            let outputFieldCounter = document.querySelector("#outputFieldCounter");
-            let resultOutput = document.querySelector("#resultField");
-            let userGuess = Number(inputField.value);
+        const addNewGameButton = () => {
+            let newGameButton = document.createElement("button");
+            newGameButton.textContent = "New Game";
+            submitButton.disabled = true;
+            btnContainer.appendChild(newGameButton);
+            newGameButton.addEventListener("click", reset);
+        }
+
+        const checkGuess = () => {
+            const userGuess = Number(inputField.value);
+
             clickCount++;
-
-            console.log(randomNumber);
-
+            outputFieldCounter.value = "Attempts number: " + clickCount;
+            outputField.value += outputField.value === "Numbers guessed: " ? `${userGuess}` : `, ${userGuess}`;
+            inputField.value = "";
 
             if (userGuess === randomNumber) {
                 resultOutput.style.backgroundColor = "green";
                 resultOutput.value = "Nice guess! You Win";
-                let newGameButton = document.createElement("button");
-                newGameButton.value = "New Game";
-                document.body.appendChild(newGameButton);
-
-
-
+                addNewGameButton();
                 return;
             }
             else {
                 resultOutput.style.backgroundColor = "red";
 
-                if (clickCount === 10) {
+                if (clickCount >= 10) {
                     resultOutput.value = "Wrong... You don t have any guesses left. ";
-                    reset();
+                    addNewGameButton();
                     return;
                 }
 
                 resultOutput.value = "Wrong guess, my number is ";
                 if (randomNumber > userGuess) {
-                    resultOutput.value += "higher "
+                    resultOutput.value += "higher ";
                 }
                 else {
-                    resultOutput.value += "lower "
+                    resultOutput.value += "lower ";
                 }
             }
-
-
-            outputFieldCounter.value = "Attempts number: " + clickCount;
-            outputField.value += " " + userGuess;
-
-            console.log(clickCount);
-            console.log(userGuess);
-            inputField.value = "";
+            
         }
-
-
-        let button = document.querySelector("#button");
-
-        button.addEventListener("click", checkGuess);
+        
+        submitButton.addEventListener("click", checkGuess);
 
     </script>
 </body>
